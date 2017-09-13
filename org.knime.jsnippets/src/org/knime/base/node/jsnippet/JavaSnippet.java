@@ -232,8 +232,6 @@ public final class JavaSnippet implements JSnippet<JavaSnippetTemplate> {
 
     private static File jSnippetJar;
     private String[] m_jarFiles = new String[0];
-    // caches the jSnippetJar and the jarFiles.
-    private File[] m_jarFileCache;
 
     private JavaFileObject m_snippet;
     private File m_snippetFile;
@@ -533,11 +531,6 @@ public final class JavaSnippet implements JSnippet<JavaSnippetTemplate> {
         }
     }
 
-
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public GuardedDocument getDocument() {
         // Lazy initialization of the document
@@ -1034,8 +1027,6 @@ public final class JavaSnippet implements JSnippet<JavaSnippetTemplate> {
     public void setJarFiles(final String[] jarFiles) {
         if (!Arrays.equals(m_jarFiles, jarFiles)) {
             m_jarFiles = jarFiles.clone();
-            // reset cache
-            m_jarFileCache = null;
             m_snippetCache.invalidate();
         }
     }
