@@ -119,7 +119,6 @@ import org.knime.workbench.editor2.actions.SaveAsSubNodeTemplateAction;
 import org.knime.workbench.editor2.actions.SelectLoopAction;
 import org.knime.workbench.editor2.actions.SetNodeDescriptionAction;
 import org.knime.workbench.editor2.actions.StepLoopAction;
-import org.knime.workbench.editor2.actions.SubNodeReconfigureAction;
 import org.knime.workbench.editor2.actions.ToggleFlowVarPortsAction;
 import org.knime.workbench.editor2.editparts.NodeContainerEditPart;
 import org.knime.workbench.editor2.editparts.WorkflowInPortBarEditPart;
@@ -406,11 +405,6 @@ public class WorkflowContextMenuProvider extends ContextMenuProvider {
 
                     // EXPAND SUBNODE
                     action = m_actionRegistry.getAction(ExpandSubNodeAction.ID);
-                    subnodeMenuMgr.appendToGroup(GROUP_SUBNODE, action);
-                    ((AbstractNodeAction)action).update();
-
-                    // RECONFIGURE SUBNODE
-                    action = m_actionRegistry.getAction(SubNodeReconfigureAction.ID);
                     subnodeMenuMgr.appendToGroup(GROUP_SUBNODE, action);
                     ((AbstractNodeAction)action).update();
 
