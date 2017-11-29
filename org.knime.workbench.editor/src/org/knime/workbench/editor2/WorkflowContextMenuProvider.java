@@ -110,6 +110,7 @@ import org.knime.workbench.editor2.actions.OpenViewAction;
 import org.knime.workbench.editor2.actions.OpenWorkflowPortViewAction;
 import org.knime.workbench.editor2.actions.PasteActionContextMenu;
 import org.knime.workbench.editor2.actions.PauseLoopExecutionAction;
+import org.knime.workbench.editor2.actions.RefreshWorkflowAction;
 import org.knime.workbench.editor2.actions.ResetAction;
 import org.knime.workbench.editor2.actions.ResumeLoopAction;
 import org.knime.workbench.editor2.actions.RevealMetaNodeTemplateAction;
@@ -124,6 +125,7 @@ import org.knime.workbench.editor2.actions.ToggleFlowVarPortsAction;
 import org.knime.workbench.editor2.editparts.NodeContainerEditPart;
 import org.knime.workbench.editor2.editparts.WorkflowInPortBarEditPart;
 import org.knime.workbench.editor2.editparts.WorkflowInPortEditPart;
+import org.knime.workbench.editor2.editparts.WorkflowRootEditPart;
 import org.knime.workbench.editor2.model.WorkflowPortBar;
 
 
@@ -300,6 +302,15 @@ public class WorkflowContextMenuProvider extends ContextMenuProvider {
         }
         if (addSelectLoop) {
             action = m_actionRegistry.getAction(SelectLoopAction.ID);
+            manager.appendToGroup(IWorkbenchActionConstants.GROUP_APP, action);
+            ((AbstractNodeAction)action).update();
+        }
+
+        //add 'refresh workflow'-action, if workflow manager is refreshable
+        EditPart rootEditPart = m_viewer.getRootEditPart().getContents();
+        if (rootEditPart instanceof WorkflowRootEditPart
+            && ((WorkflowRootEditPart)rootEditPart).getWorkflowManager().isRefreshable()) {
+            action = m_actionRegistry.getAction(RefreshWorkflowAction.ID);
             manager.appendToGroup(IWorkbenchActionConstants.GROUP_APP, action);
             ((AbstractNodeAction)action).update();
         }

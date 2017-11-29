@@ -224,6 +224,7 @@ import org.knime.workbench.editor2.actions.OpenDialogAction;
 import org.knime.workbench.editor2.actions.PasteAction;
 import org.knime.workbench.editor2.actions.PasteActionContextMenu;
 import org.knime.workbench.editor2.actions.PauseLoopExecutionAction;
+import org.knime.workbench.editor2.actions.RefreshWorkflowAction;
 import org.knime.workbench.editor2.actions.ResetAction;
 import org.knime.workbench.editor2.actions.ResumeLoopAction;
 import org.knime.workbench.editor2.actions.RevealMetaNodeTemplateAction;
@@ -680,6 +681,9 @@ public class WorkflowEditor extends GraphicalEditor implements
         ConvertMetaNodeToSubNodeAction wrap = new ConvertMetaNodeToSubNodeAction(this);
         ConvertSubNodeToMetaNodeAction unWrap = new ConvertSubNodeToMetaNodeAction(this);
 
+        //misc
+        RefreshWorkflowAction refreshWorkflow = new RefreshWorkflowAction(this);
+
         // register the actions
         m_actionRegistry.registerAction(undo);
         m_actionRegistry.registerAction(redo);
@@ -734,6 +738,8 @@ public class WorkflowEditor extends GraphicalEditor implements
 
         m_actionRegistry.registerAction(annotation);
 
+        m_actionRegistry.registerAction(refreshWorkflow);
+
         // remember ids for later updates via 'updateActions'
         m_editorActions = new ArrayList<String>();
         m_editorActions.add(undo.getId());
@@ -766,6 +772,8 @@ public class WorkflowEditor extends GraphicalEditor implements
         m_editorActions.add(defineMetaNodeTemplate.getId());
         m_editorActions.add(checkUpdateMetaNodeLink.getId());
         m_editorActions.add(annotation.getId());
+
+        m_editorActions.add(refreshWorkflow.getId());
     }
 
     /**
@@ -2221,9 +2229,10 @@ public class WorkflowEditor extends GraphicalEditor implements
                 + "\".\n  Use \"Save\" to upload it back to its original location on the server or \"Save As...\" to "
                 + "store it in a different location.");
         } else if (!getWorkflowManager().isPresent()) {
-            workflowFigure.setMessage(
-                "This is a remotely opened workflow job. It can neither be stored locally nor edited."
-                + " It also just represents a static snapshot of the workflow job and won't get updated automatically.");
+            workflowFigure
+                .setMessage("This is a remotely opened job workflow. It can neither be stored locally nor edited."
+                    + " It also just represents a static snapshot of the job workflow and won't get"
+                    + " updated automatically (use context menu to refresh).");
         } else {
             workflowFigure.setMessage(null);
         }
