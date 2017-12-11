@@ -9,8 +9,8 @@
 	<inceptionYear>2017</inceptionYear>
 	
 
-<build>
-<plugins>
+	<build>
+		<plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -20,8 +20,8 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-</plugins>
-</build>
+		</plugins>
+	</build>
 
 
 	<properties>
@@ -71,6 +71,11 @@
 			<groupId>org.scijava</groupId>
 			<artifactId>scripting-jython</artifactId>
 			<version>0.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scripting-beanshell</artifactId>
+			<version>0.3.2</version>
 		</dependency>
 
 		<!-- Third-party dependencies -->
