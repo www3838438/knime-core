@@ -85,6 +85,8 @@ final class ColorManager2DialogNominal extends JPanel {
 
     private int m_alpha = 255;
 
+
+
     /**
      * Creates an empty nominal dialog.
      */
@@ -133,7 +135,7 @@ final class ColorManager2DialogNominal extends JPanel {
     }
 
     /**
-     * Select new color for the selected attribute value of the the selected
+     * Select new color for the selected attribute value of the selected
      * column.
      *
      * @param column the selected column
@@ -176,12 +178,19 @@ final class ColorManager2DialogNominal extends JPanel {
             return Collections.EMPTY_MAP;
         }
         Map<DataCell, ColorAttr> map = new LinkedHashMap<DataCell, ColorAttr>();
+        String[] hex_colors= {"#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"};
+        //String[] hex_colors = {"#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"};
         int idx = 0;
         for (DataCell cell : set) {
             // use Color, half saturated, half bright for base color
-            Color color = new Color(Color.HSBtoRGB((float) idx++
-                    / (float) set.size(), 1.0f, 1.0f));
+//            Color color = new Color(Color.HSBtoRGB((float) idx++
+//                  / (float) set.size(), 1.0f, 1.0f));
+            if(idx>=hex_colors.length){
+                idx = 0;
+            }
+            Color color = Color.decode(hex_colors[idx]);
             map.put(cell, ColorAttr.getInstance(color));
+            idx++;
         }
         return map;
     }

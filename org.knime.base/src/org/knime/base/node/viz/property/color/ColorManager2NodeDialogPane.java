@@ -56,6 +56,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.colorchooser.DefaultColorSelectionModel;
 
 import org.knime.core.data.DataCell;
@@ -81,14 +82,14 @@ import org.knime.core.node.util.DataColumnSpecListCellRenderer;
  * the color settings are locally saved. During save the settings are saved by
  * the underlying {@link ColorHandler}'s <code>ColorModel</code> which in turn a
  * read by the model.
- * 
+ *
  * @see ColorManager2NodeModel
- * 
+ *
  * @author Thomas Gabriel, University of Konstanz
  */
 final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         ItemListener {
-    
+
     private static final NodeLogger LOGGER = NodeLogger.getLogger(
             ColorManager2NodeDialogPane.class);
 
@@ -106,9 +107,13 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
 
     /** Range color panel. */
     private final ColorManager2DialogRange m_range;
-    
-    private final DefaultAlphaColorPanel m_alphaPanel = 
+
+    private final DefaultAlphaColorPanel m_alphaPanel =
         new DefaultAlphaColorPanel();
+
+    /** Palettes color panel. */
+    private final DefaultPalettesColorPanel m_palettesPanel =
+            new DefaultPalettesColorPanel();
 
     /**
      * Creates a new color manager dialog; all color settings are empty.
@@ -127,7 +132,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(m_buttonNominal);
         buttonGroup.add(m_buttonRange);
-        
+
         /**
          * Overwrite default color selection model to throw color event even if
          * the color is the same and no event was created.
@@ -148,7 +153,20 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         // init color chooser and the value combo box
         final JColorChooser jcc = new JColorChooser(
                 new MyColorSelectionModel());
-        jcc.addChooserPanel(m_alphaPanel);
+        // rearrange order of panels
+        AbstractColorChooserPanel[] oldPanels = jcc.getChooserPanels();
+        AbstractColorChooserPanel[] newPanels = new AbstractColorChooserPanel[oldPanels.length+2];
+
+        newPanels[0] = m_palettesPanel;
+        int i = 1;
+        for(AbstractColorChooserPanel p:oldPanels){
+            newPanels[i] = p;
+            i++;
+        }
+        newPanels[i] = m_alphaPanel;
+        jcc.setChooserPanels(newPanels);
+
+
 
         // init nominal and range color selection dialog
         m_nominal = new ColorManager2DialogNominal();
@@ -200,7 +218,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
      * Updates this dialog by refreshing all components in the color tab. Inits
      * the column name combo box and sets the values for the default selected
      * one.
-     * 
+     *
      * @param settings the settings to load
      * @param specs the input table specs
      * @throws NotConfigurableException if no column found for color selection
@@ -212,7 +230,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         // remove all columns
         m_columns.removeItemListener(this);
         m_columns.removeAllItems();
-        
+
         // reset nominal and range panel
         m_nominal.removeAllElements();
         m_range.removeAllElements();
@@ -221,11 +239,11 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         int hasNominals = -1;
         // index of the last column with numeric ranges defined
         int hasRanges = -1;
-        
+
         // read settings and write into the map
         String target = settings.getString(
                 ColorManager2NodeModel.SELECTED_COLUMN, null);
-        
+
         // null = not specified, true = nominal, and false = range
         Boolean nominalSelected = null;
         try {
@@ -268,7 +286,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         // update target column if: (1) null, (2) not in spec, (3+4) does not
         // have possible values defined AND is not compatible with DoubleType
         if (target == null || !specs[0].containsName(target)
-                || (!specs[0].getColumnSpec(target).getDomain().hasValues() 
+                || (!specs[0].getColumnSpec(target).getDomain().hasValues()
                 &&  !specs[0].getColumnSpec(target).getType().isCompatible(
                         DoubleValue.class))) {
             // select first nominal column if nothing could be selected
@@ -277,16 +295,16 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
                 nominalSelected = true;
             } else {
                 // otherwise the first range column
-                if (hasRanges > -1) { 
+                if (hasRanges > -1) {
                     target = specs[0].getColumnSpec(hasRanges).getName();
                     nominalSelected = false;
-                } else { // 
+                } else { //
                     assert false : "Both, nominal and range column are not "
                         + "available!";
                 }
             }
         } else { // we have a valid target column
-            boolean domValues = 
+            boolean domValues =
                 specs[0].getColumnSpec(target).getDomain().hasValues();
             // nothing selected before
             if (nominalSelected == null) {
@@ -311,7 +329,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         } else {
             m_nominal.select(null);
         }
-        
+
         // numeric range column selected
         if (hasRanges > -1) {
             m_range.loadSettings(settings, target);
@@ -332,7 +350,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
                 m_columns.setSelectedIndex(i);
             }
         }
-        
+
         // inform about column change
         columnChanged(target, nominalSelected);
         // register column change listener
@@ -342,7 +360,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
     /**
      * Method is invoked by the super class in order to force the dialog to
      * apply its changes.
-     * 
+     *
      * @param settings the object to write the settings into
      * @throws InvalidSettingsException if either nominal or range selection
      *             could not be saved
@@ -376,6 +394,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
      * @param e the source event
      * @see ItemListener#itemStateChanged(java.awt.event.ItemEvent)
      */
+    @Override
     public void itemStateChanged(final ItemEvent e) {
         Object o = e.getItem();
         if (o == null) {
@@ -384,7 +403,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         String cell = ((DataColumnSpec)o).getName();
         columnChanged(cell, true);
     }
-    
+
     private void columnChanged(final String cell, final boolean nominal) {
         boolean hasRanges = m_range.select(cell);
         boolean hasNominal = m_nominal.select(cell);
@@ -405,7 +424,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
             m_buttonNominal.setEnabled(false);
         }
     }
-    
+
 
 
     /* Find selected column in button group. */
