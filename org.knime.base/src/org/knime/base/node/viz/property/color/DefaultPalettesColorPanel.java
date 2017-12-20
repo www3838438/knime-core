@@ -68,10 +68,18 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
  */
 public class DefaultPalettesColorPanel extends AbstractColorChooserPanel implements ActionListener{
 
-    private static final String[] set1Colors = {"#fb8072", "#bc80bd", "#b3de69", "#80b1d3", "#fdb462", "#8dd3c7", "#bebada", "#ffed6f", "#ccebc5", "#d9d9d9", "#fccde5", "#ffffb3"};
-    private static final String[] set2Colors = {"#33a02c", "#e31a1c", "#b15928", "#6a3d9a", "#1f78b4", "#ff7f00", "#b2df8a", "#fdbf6f", "#fb9a99", "#cab2d6", "#a6cee3", "#ffff99"};
+
     private JButton set1Button = new JButton("Apply to columns");
     private JButton set2Button = new JButton("Apply to columns");
+    private String[] palette_default;
+    private String[] palette_paired;
+    /**
+     *
+     */
+    public DefaultPalettesColorPanel(final String[] pd, final String[] pp) {
+        palette_default = pd;
+        palette_paired = pp;
+    }
     /**
      * {@inheritDoc}
      */
@@ -114,13 +122,15 @@ public class DefaultPalettesColorPanel extends AbstractColorChooserPanel impleme
         }
 
         for(int i=0;i<12;i++){
-            set1Panel.add(new PaletteButton(set1Colors[i]));
-            set2Panel.add(new PaletteButton(set2Colors[i]));
+            set1Panel.add(new PaletteButton(palette_default[i]));
+            set2Panel.add(new PaletteButton(palette_paired[i]));
         }
         //JButtons Apply
         set1Panel.add(new JPanel());
+        set1Button.setFont(new Font(set1Button.getFont().getName(), Font.PLAIN, set1Button.getFont().getSize()));
         set1Panel.add(set1Button);
         set2Panel.add(new JPanel());
+        set2Button.setFont(new Font(set2Button.getFont().getName(), Font.PLAIN, set2Button.getFont().getSize()));
         set2Panel.add(set2Button);
 
         //JLabels
@@ -153,18 +163,6 @@ public class DefaultPalettesColorPanel extends AbstractColorChooserPanel impleme
         set2Button.addActionListener(al2);
     }
 
-    /**
-     * @param index
-     * @return string array with color values for given index
-     */
-    public String[] getPalette(final int index){
-        if(index==1){
-            return set1Colors;
-        }else if(index==2){
-            return set2Colors;
-        }
-        return null;
-    }
     /**
      * {@inheritDoc}
      */

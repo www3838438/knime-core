@@ -85,13 +85,16 @@ final class ColorManager2DialogNominal extends JPanel {
 
     private int m_alpha = 255;
 
-
+    private static String[] palette_default;
 
     /**
      * Creates an empty nominal dialog.
+     * @param pd default palette
      */
-    ColorManager2DialogNominal() {
+    ColorManager2DialogNominal(final String[] pd) {
         super(new GridLayout());
+        //set default palette
+        palette_default = pd;
 
         // map for key to color mapping
         m_map = new LinkedHashMap<String, Map<DataCell, ColorAttr>>();
@@ -203,13 +206,12 @@ final class ColorManager2DialogNominal extends JPanel {
             return Collections.EMPTY_MAP;
         }
         Map<DataCell, ColorAttr> map = new LinkedHashMap<DataCell, ColorAttr>();
-        String[] hex_colors= {"#fb8072", "#bc80bd", "#b3de69", "#80b1d3", "#fdb462", "#8dd3c7", "#bebada", "#ffed6f", "#ccebc5", "#d9d9d9", "#fccde5", "#ffffb3"};
         int idx = 0;
         for (DataCell cell : set) {
-            if(idx>=hex_colors.length){
+            if(idx>=palette_default.length){
                 idx = 0;
             }
-            Color color = Color.decode(hex_colors[idx]);
+            Color color = Color.decode(palette_default[idx]);
             map.put(cell, ColorAttr.getInstance(color));
             idx++;
         }

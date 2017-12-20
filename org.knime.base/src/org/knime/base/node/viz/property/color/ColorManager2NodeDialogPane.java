@@ -116,6 +116,10 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
     /** Palettes color panel. */
     private final DefaultPalettesColorPanel m_palettesPanel;
 
+    /** Default palettes. */
+    private static final String[] PALETTE_DEFAULT = {"#fb8072", "#bc80bd", "#b3de69", "#80b1d3", "#fdb462", "#8dd3c7", "#bebada", "#ffed6f", "#ccebc5", "#d9d9d9", "#fccde5", "#ffffb3"};
+    private static final String[] PALETTE_PAIRED = {"#33a02c", "#e31a1c", "#b15928", "#6a3d9a", "#1f78b4", "#ff7f00", "#b2df8a", "#fdbf6f", "#fb9a99", "#cab2d6", "#a6cee3", "#ffff99"};
+
     /**
      * Creates a new color manager dialog; all color settings are empty.
      */
@@ -155,19 +159,19 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         final JColorChooser jcc = new JColorChooser(
                 new MyColorSelectionModel());
         // add action listener to palette buttons
-        m_palettesPanel = new DefaultPalettesColorPanel();
+        m_palettesPanel = new DefaultPalettesColorPanel(PALETTE_DEFAULT, PALETTE_PAIRED);
         final ActionListener al1 = new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                m_nominal.updateWithPalette(getSelectedColumn(), m_palettesPanel.getPalette(1));
+                m_nominal.updateWithPalette(getSelectedColumn(), PALETTE_DEFAULT);
             }
         };
         final ActionListener al2 = new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                m_nominal.updateWithPalette(getSelectedColumn(), m_palettesPanel.getPalette(2));
+                m_nominal.updateWithPalette(getSelectedColumn(), PALETTE_PAIRED);
             }
         };
         m_palettesPanel.addActionListeners(al1, al2);
@@ -187,7 +191,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
 
 
         // init nominal and range color selection dialog
-        m_nominal = new ColorManager2DialogNominal();
+        m_nominal = new ColorManager2DialogNominal(PALETTE_DEFAULT);
         m_range = new ColorManager2DialogRange();
 
         // combo holding the values for a certain column
