@@ -152,6 +152,31 @@ final class ColorManager2DialogNominal extends JPanel {
             super.repaint();
         }
     }
+    /**
+     * Apply new colors of a given palette of the selected column.
+     *
+     * @param column the selected column
+     * @param palette the new palette
+     */
+    void updateWithPalette(final String column, final String[] palette){
+        Map<DataCell, ColorAttr> map = m_map.get(column);
+        int i = 0;
+        ColorAttr color;
+        for(Object o : m_columnModel.toArray()){
+            if(i>=palette.length){
+                i = 0;
+            }
+            ColorManager2Icon icon = (ColorManager2Icon)o;
+            color = ColorAttr.getInstance(Color.decode(palette[i]));
+            icon.setColor(color.getColor());
+            map.put(icon.getCell(), color);
+            i++;
+        }
+
+        super.validate();
+        super.repaint();
+
+    }
 
     /**
      * Adds the given set of possible values to the internal structure by the
@@ -178,13 +203,9 @@ final class ColorManager2DialogNominal extends JPanel {
             return Collections.EMPTY_MAP;
         }
         Map<DataCell, ColorAttr> map = new LinkedHashMap<DataCell, ColorAttr>();
-        String[] hex_colors= {"#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"};
-        //String[] hex_colors = {"#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"};
+        String[] hex_colors= {"#fb8072", "#bc80bd", "#b3de69", "#80b1d3", "#fdb462", "#8dd3c7", "#bebada", "#ffed6f", "#ccebc5", "#d9d9d9", "#fccde5", "#ffffb3"};
         int idx = 0;
         for (DataCell cell : set) {
-            // use Color, half saturated, half bright for base color
-//            Color color = new Color(Color.HSBtoRGB((float) idx++
-//                  / (float) set.size(), 1.0f, 1.0f));
             if(idx>=hex_colors.length){
                 idx = 0;
             }

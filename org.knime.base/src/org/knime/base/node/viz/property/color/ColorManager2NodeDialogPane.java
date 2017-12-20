@@ -47,6 +47,8 @@ package org.knime.base.node.viz.property.color;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -112,8 +114,7 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         new DefaultAlphaColorPanel();
 
     /** Palettes color panel. */
-    private final DefaultPalettesColorPanel m_palettesPanel =
-            new DefaultPalettesColorPanel();
+    private final DefaultPalettesColorPanel m_palettesPanel;
 
     /**
      * Creates a new color manager dialog; all color settings are empty.
@@ -153,6 +154,23 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         // init color chooser and the value combo box
         final JColorChooser jcc = new JColorChooser(
                 new MyColorSelectionModel());
+        // add action listener to palette buttons
+        m_palettesPanel = new DefaultPalettesColorPanel();
+        final ActionListener al1 = new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                m_nominal.updateWithPalette(getSelectedColumn(), m_palettesPanel.getPalette(1));
+            }
+        };
+        final ActionListener al2 = new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                m_nominal.updateWithPalette(getSelectedColumn(), m_palettesPanel.getPalette(2));
+            }
+        };
+        m_palettesPanel.addActionListeners(al1, al2);
         // rearrange order of panels
         AbstractColorChooserPanel[] oldPanels = jcc.getChooserPanels();
         AbstractColorChooserPanel[] newPanels = new AbstractColorChooserPanel[oldPanels.length+2];
@@ -417,11 +435,13 @@ final class ColorManager2NodeDialogPane extends NodeDialogPane implements
         }
         if (hasNominal) {
             m_buttonNominal.setEnabled(true);
+            m_palettesPanel.setEnabled(true);
             if (nominal || !hasRanges) {
                 m_buttonNominal.setSelected(true);
             }
         } else {
             m_buttonNominal.setEnabled(false);
+            m_palettesPanel.setEnabled(false);
         }
     }
 

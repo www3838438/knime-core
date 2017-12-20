@@ -46,8 +46,8 @@ package org.knime.base.node.viz.property.color;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -67,11 +67,11 @@ import javax.swing.colorchooser.AbstractColorChooserPanel;
  * @since 3.5
  */
 public class DefaultPalettesColorPanel extends AbstractColorChooserPanel implements ActionListener{
-    /**
-     *
-     */
-    private static final String[] set1Colors = {"#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"};
-    private static final String[] set2Colors = {"#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"};
+
+    private static final String[] set1Colors = {"#fb8072", "#bc80bd", "#b3de69", "#80b1d3", "#fdb462", "#8dd3c7", "#bebada", "#ffed6f", "#ccebc5", "#d9d9d9", "#fccde5", "#ffffb3"};
+    private static final String[] set2Colors = {"#33a02c", "#e31a1c", "#b15928", "#6a3d9a", "#1f78b4", "#ff7f00", "#b2df8a", "#fdbf6f", "#fb9a99", "#cab2d6", "#a6cee3", "#ffff99"};
+    private JButton set1Button = new JButton("Apply to columns");
+    private JButton set2Button = new JButton("Apply to columns");
     /**
      * {@inheritDoc}
      */
@@ -79,9 +79,9 @@ public class DefaultPalettesColorPanel extends AbstractColorChooserPanel impleme
     protected void buildChooser() {
         super.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         //JPanels
-        JPanel set1Panel = new JPanel(new GridLayout(1,12));
+        JPanel set1Panel = new JPanel(new FlowLayout());
         set1Panel.setAlignmentX(LEFT_ALIGNMENT);
-        JPanel set2Panel = new JPanel(new GridLayout(1, 12));
+        JPanel set2Panel = new JPanel(new FlowLayout());
         set2Panel.setAlignmentX(LEFT_ALIGNMENT);
         /**
          * Overwrites the default JButton to notify the ColorSelectionModel of changes.
@@ -117,12 +117,16 @@ public class DefaultPalettesColorPanel extends AbstractColorChooserPanel impleme
             set1Panel.add(new PaletteButton(set1Colors[i]));
             set2Panel.add(new PaletteButton(set2Colors[i]));
         }
-
+        //JButtons Apply
+        set1Panel.add(new JPanel());
+        set1Panel.add(set1Button);
+        set2Panel.add(new JPanel());
+        set2Panel.add(set2Button);
 
         //JLabels
-        JLabel set1Label = new JLabel("Set 1");
+        JLabel set1Label = new JLabel("Default");
         set1Label.setFont(new Font(set1Label.getFont().getName(), Font.PLAIN, set1Label.getFont().getSize()+2));
-        JLabel set2Label = new JLabel("Set 2");
+        JLabel set2Label = new JLabel("Paired");
         set2Label.setFont(new Font(set2Label.getFont().getName(), Font.PLAIN, set2Label.getFont().getSize()+2));
 
 
@@ -135,6 +139,42 @@ public class DefaultPalettesColorPanel extends AbstractColorChooserPanel impleme
         super.add(Box.createVerticalStrut(5));
         super.add(set2Panel);
 
+    }
+
+    /**
+     * @param al1 the action listener for the first button
+     * @param al2 the action listener for the second button
+     */
+    public void addActionListeners(final ActionListener al1, final ActionListener al2){
+        if(al1==null || al2==null || set1Button==null || set2Button==null){
+            return;
+        }
+        set1Button.addActionListener(al1);
+        set2Button.addActionListener(al2);
+    }
+
+    /**
+     * @param index
+     * @return string array with color values for given index
+     */
+    public String[] getPalette(final int index){
+        if(index==1){
+            return set1Colors;
+        }else if(index==2){
+            return set2Colors;
+        }
+        return null;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEnabled(final boolean enabled) {
+        super.setEnabled(enabled);
+        if(set1Button!=null && set2Button!=null){
+            set1Button.setVisible(enabled);
+            set2Button.setVisible(enabled);
+        }
     }
 
     /**
